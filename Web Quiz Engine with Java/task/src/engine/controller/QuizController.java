@@ -1,5 +1,6 @@
 package engine.controller;
 
+import engine.model.AnswerResponse;
 import engine.model.Quiz;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,12 @@ public class QuizController {
     Quiz mockQuiz = new Quiz("The Java Logo", "What is depicted on the Java logo?",
             new ArrayList<>(asList("Robot","Tea leaf","Cup of coffee","Bug")));
 
-    record AnswerStatus(Boolean success, String feedback) {
-    }
 
-    AnswerStatus wrongAnswer = new AnswerStatus(false, "Wrong answer! Please, try again.");
-    AnswerStatus correctAnswer = new AnswerStatus(true, "Congratulations, you're right!");
+//    record AnswerStatus(Boolean success, String feedback) {
+//    }
+//
+//    AnswerStatus wrongAnswer = new AnswerStatus(false, "Wrong answer! Please, try again.");
+//    AnswerStatus correctAnswer = new AnswerStatus(true, "Congratulations, you're right!");
 
     @GetMapping("/api/quiz")
     ResponseEntity<Quiz> getQuiz() {
@@ -30,10 +32,10 @@ public class QuizController {
     }
 
     @PostMapping("/api/quiz")
-    ResponseEntity<AnswerStatus> checkAnswer(@RequestParam(name = "answer") int answer) {
+    ResponseEntity<AnswerResponse> checkAnswer(@RequestParam(name = "answer") int answer) {
         if (answer == 2) {
-            return new ResponseEntity<>(correctAnswer, HttpStatus.OK);
+            return new ResponseEntity<>(AnswerResponse.CORRECT, HttpStatus.OK);
         }
-        return new ResponseEntity<>(wrongAnswer, HttpStatus.OK);
+        return new ResponseEntity<>(AnswerResponse.WRONG, HttpStatus.OK);
     }
 }
