@@ -1,5 +1,8 @@
 package engine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 public class Quiz {
@@ -8,16 +11,18 @@ public class Quiz {
     private String title;
     private String text;
     private ArrayList<String> options;
+    private int answer;
 
     public Quiz() {
         this.id = ++lastId;
     }
 
-    public Quiz(String title, String text, ArrayList<String> options) {
+    public Quiz(String title, String text, ArrayList<String> options, int answer) {
         this.id = ++lastId;
         this.title = title;
         this.text = text;
         this.options = options;
+        this.answer = answer;
     }
 
     public int getId() {
@@ -50,5 +55,15 @@ public class Quiz {
 
     public void setOptions(ArrayList<String> options) {
         this.options = options;
+    }
+
+    @JsonIgnore
+    public int getAnswer() {
+        return answer;
+    }
+
+    @JsonProperty
+    public void setAnswer(int answer) {
+        this.answer = answer;
     }
 }
