@@ -12,7 +12,7 @@ import java.util.Map;
 public class QuizService {
     Map<Integer, Quiz> quizess = new HashMap<>();
 
-    //Add new quiz to QuizList
+    //Add new quiz to quizzes
     public void add(Quiz quiz) {
         System.out.println("Еббучий квиз с ID: " + quiz.getId() + " будет добавлен");
         quizess.put(quiz.getId(), quiz);
@@ -23,16 +23,17 @@ public class QuizService {
         return quizess.get(id);
     }
 
-    //Get QuizList size
+    //Get quizzes size
     public int getQuizListSize() {
         return quizess.size();
     }
 
-    //Get QuizList
+    //Get quizzes
     public ArrayList<Quiz> getQuizList() {
         return new ArrayList<>(quizess.values().stream().toList());
     }
 
+    //Is quiz with id present in quizzes?
     public boolean quizIsPresent(int id) {
         return quizess.containsKey(id);
     }
