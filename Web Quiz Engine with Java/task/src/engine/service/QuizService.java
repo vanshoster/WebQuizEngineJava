@@ -1,40 +1,51 @@
 package engine.service;
 
 import engine.model.Quiz;
+import engine.repository.QuizRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 @Service
+@Transactional
 public class QuizService {
-    Map<Integer, Quiz> quizess = new HashMap<>();
+
+    private final QuizRepository quizRepository;
+
+    @Autowired
+    QuizService(QuizRepository quizRepository) {
+        this.quizRepository = quizRepository;
+    }
 
     //Add new quiz to quizzes
     public void add(Quiz quiz) {
         System.out.println("Еббучий квиз с ID: " + quiz.getId() + " будет добавлен");
-        quizess.put(quiz.getId(), quiz);
+        quizRepository.save(quiz);
     }
 
     //Get quiz by ID
-    public Quiz getQuizByID(int id) {
-        return quizess.get(id);
+    public Quiz getQuizByID(Long id) {
+        return quizRepository.getQuizById(id);
     }
 
     //Get quizzes size
-    public int getQuizListSize() {
-        return quizess.size();
+    public long getQuizListSize() {
+        return quizRepository.count();
     }
 
     //Get quizzes
-    public ArrayList<Quiz> getQuizList() {
-        return new ArrayList<>(quizess.values().stream().toList());
+    public List<Quiz> getQuizList() {
+        return quizRepository.getAllByOrderByIdAsc();
     }
 
     //Is quiz with id present in quizzes?
-    public boolean quizIsPresent(int id) {
-        return quizess.containsKey(id);
+    public boolean existsQuizById(Long id) {
+        return quizRepository.existsQuizById(id);
     }
 }

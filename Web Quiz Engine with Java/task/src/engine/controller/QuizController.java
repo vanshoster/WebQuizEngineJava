@@ -37,8 +37,8 @@ public class QuizController {
 
     //Get quiz by ID
     @GetMapping(PATH + "/{id}")
-    ResponseEntity<Quiz> getQuizByID(@PathVariable int id) {
-        if (quizService.quizIsPresent(id)) {
+    ResponseEntity<Quiz> getQuizByID(@PathVariable Long id) {
+        if (quizService.existsQuizById(id)) {
             return new ResponseEntity<>(quizService.getQuizByID(id), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -47,14 +47,14 @@ public class QuizController {
 
     //Get quiz list
     @GetMapping(PATH)
-    ResponseEntity<ArrayList<Quiz>> getQuizList() {
+    ResponseEntity<List<Quiz>> getQuizList() {
         return new ResponseEntity<>(quizService.getQuizList(), HttpStatus.OK);
     }
 
     //Post answer index for ID quiz
     @PostMapping(PATH + "/{id}/solve")
-    ResponseEntity<AnswerResponse> postAnswerForQuizWithID(@PathVariable int id, @RequestBody @Valid AnswerWrapper answerWrapper) {
-        if (!quizService.quizIsPresent(id)) {
+    ResponseEntity<AnswerResponse> postAnswerForQuizWithID(@PathVariable Long id, @RequestBody @Valid AnswerWrapper answerWrapper) {
+        if (!quizService.existsQuizById(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Set<Integer> answer = answerWrapper.getAnswer();
