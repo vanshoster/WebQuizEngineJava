@@ -2,27 +2,43 @@ package engine.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.validation.constraints.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Quiz {
     private static int lastId = 0;
     private int id;
+    @NotBlank
     private String title;
+    @NotBlank
     private String text;
+    @NotNull
+    @Size(min = 2)
     private ArrayList<String> options;
-    private int answer;
+
+    private Set<@Min(value = 0) Integer> answer = new HashSet<>();;
 
     public Quiz() {
         this.id = ++lastId;
     }
 
-    public Quiz(String title, String text, ArrayList<String> options, int answer) {
-        this.id = ++lastId;
+    public Quiz(String title, String text, ArrayList<String> options, Set<Integer> answer) {
         this.title = title;
         this.text = text;
         this.options = options;
         this.answer = answer;
+    }
+
+    public static int getLastId() {
+        return lastId;
+    }
+
+    public static void refreshLastId() {
+        --lastId;
     }
 
     public int getId() {
@@ -58,12 +74,12 @@ public class Quiz {
     }
 
     @JsonIgnore
-    public int getAnswer() {
+    public Set<Integer> getAnswer() {
         return answer;
     }
 
     @JsonProperty
-    public void setAnswer(int answer) {
+    public void setAnswer(Set<Integer> answer) {
         this.answer = answer;
     }
 }
