@@ -1,21 +1,20 @@
 package engine.controller;
 
-import engine.model.AnswerResponse;
-import engine.model.AnswerWrapper;
-import engine.model.Quiz;
+import engine.model.*;
 import engine.service.QuizService;
+import engine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 
 @RestController
 @Validated
@@ -23,14 +22,21 @@ public class QuizController {
 
     private static final String PATH = "api/quizzes";
     private final QuizService quizService;
+    private final UserService userService;
     @Autowired
-    QuizController(QuizService quizService) {
+    QuizController(QuizService quizService, UserService userService) {
         this.quizService = quizService;
+        this.userService = userService;
     }
 
     //Create new quiz
     @PostMapping(PATH)
-    ResponseEntity<Quiz> postNewQuiz(@RequestBody @Valid Quiz quiz) {
+    ResponseEntity<Quiz> postNewQuiz(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Valid Quiz quiz) {
+        if (userDetails == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.getUserByEmail(userDetails.getUsername());
+        quiz.setCreator(user);
         quizService.add(quiz);
         return new ResponseEntity<>(quiz, HttpStatus.OK);
     }
@@ -43,6 +49,24 @@ public class QuizController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    //Delete quiz by ID
+    @DeleteMapping(PATH + "/{id}")
+    ResponseEntity<HttpStatus> deleteQuizById(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+        if (userDetails == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if (!quizService.existsQuizById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Quiz quiz = quizService.getQuizByID(id);
+        boolean isCreator = Objects.equals(userDetails.getUsername().toLowerCase(), quiz.getCreator().getEmail());
+        if (!isCreator) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        quizService.deleteQuizById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     //Get quiz list

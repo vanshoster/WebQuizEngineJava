@@ -16,7 +16,7 @@ import java.util.Set;
 @Table(name = "QUIZ")
 public class Quiz {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
     private String title;
@@ -30,7 +30,12 @@ public class Quiz {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    private Set<@Min(value = 0) Integer> answer = new HashSet<>();;
+    private Set<@Min(value = 0) Integer> answer = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User creator;
 
     public Quiz() {
     }
@@ -82,5 +87,13 @@ public class Quiz {
     @JsonProperty
     public void setAnswer(Set<Integer> answer) {
         this.answer = answer;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 }

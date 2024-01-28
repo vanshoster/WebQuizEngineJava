@@ -25,7 +25,6 @@ public class QuizService {
 
     //Add new quiz to quizzes
     public void add(Quiz quiz) {
-        System.out.println("Еббучий квиз с ID: " + quiz.getId() + " будет добавлен");
         quizRepository.save(quiz);
     }
 
@@ -47,5 +46,11 @@ public class QuizService {
     //Is quiz with id present in quizzes?
     public boolean existsQuizById(Long id) {
         return quizRepository.existsQuizById(id);
+    }
+
+    //Delete quiz by id. Return true if quiz is present
+    public boolean deleteQuizById(Long id) {
+        long isDeleted = quizRepository.deleteQuizById(id);
+        return isDeleted > 0;
     }
 }
