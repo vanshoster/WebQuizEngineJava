@@ -16,16 +16,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
+    @Column(unique=true)
     @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
     @NotBlank
     @Size(min = 5)
     private String password;
 
-    //@OneToMany(mappedBy = "creator", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Quiz> userQuizzes= new HashSet<>();
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CompletedQuiz> completedQuizzes = new HashSet<>();
 
     public User() {
     }
@@ -52,5 +57,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Quiz> getUserQuizzes() {
+        return userQuizzes;
+    }
+
+    public void setUserQuizzes(Set<Quiz> userQuizzes) {
+        this.userQuizzes = userQuizzes;
+    }
+
+    public Set<CompletedQuiz> getCompletedQuizzes() {
+        return completedQuizzes;
+    }
+
+    public void setCompletedQuizzes(Set<CompletedQuiz> completedQuizzes) {
+        this.completedQuizzes = completedQuizzes;
     }
 }

@@ -37,6 +37,11 @@ public class Quiz {
     @JoinColumn(name = "user_id")
     private User creator;
 
+    //One-to-One relation between Quiz and CompletedQuiz
+    @JsonIgnore
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CompletedQuiz> completedQuizzes = new HashSet<>();
+
     public Quiz() {
     }
 
@@ -95,5 +100,13 @@ public class Quiz {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public Set<CompletedQuiz> getCompletedQuizzes() {
+        return completedQuizzes;
+    }
+
+    public void setCompletedQuizzes(Set<CompletedQuiz> completedQuizzes) {
+        this.completedQuizzes = completedQuizzes;
     }
 }

@@ -1,5 +1,6 @@
 package engine.service;
 
+import engine.model.CompletedQuiz;
 import engine.model.User;
 import engine.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,11 @@ public class UserService {
     //Is user exists in users?
     public boolean existsUserByEmail(String email) {
         return userRepository.existsUserByEmailIgnoreCase(email);
+    }
+
+    //Add completed quiz to user
+    public void addCompletedQuiz(CompletedQuiz completedQuiz, User user) {
+        user.getCompletedQuizzes().add(completedQuiz);
+        userRepository.save(user);
     }
 }
